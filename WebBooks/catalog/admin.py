@@ -17,7 +17,7 @@ class BooksInstanseInline(admin.TabularInline):
 #Регистрируем классы администратора для книг
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    list_display = ('title', 'genre','language', 'display_author')
+    list_display = ('title', 'genre', 'language', 'display_author')
     list_filter = ('genre', 'author')
     inlines = [BooksInstanseInline]
 admin.site.register(Genre)
@@ -27,12 +27,13 @@ admin.site.register(Status)
 #Регистрируем классы администратора для экземпляра книг
 @admin.register(BookInstanse)
 class BookInstanseAdmin(admin.ModelAdmin):
-    list_filter = ('book', 'status')
+    list_display = ('book', 'status', 'borrower', 'due_back', 'id')
+    list_filter = ('status', 'due_back')
     fieldsets = (
         ('Экземпляр книги', {
             'fields': ('book', 'imprint', 'inv_nom')
         }),
         ('Статус и окончание его действия', {
-            'fields': ('status', 'due_back')
+            'fields': ('status', 'due_back', 'borrower')
         }),
     )
