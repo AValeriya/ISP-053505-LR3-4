@@ -1,4 +1,5 @@
 from django.shortcuts import render
+import logging
 from django.http import HttpResponse
 from .models import Book, Author, BookInstanse, Genre
 from django.views import generic
@@ -18,6 +19,8 @@ def authors_add(request):
     return render(request, "catalog/authors_add.html",
                   {"form": authorsform, "author": author})
 
+logger = logging.getLogger(__name__)
+
 # сохранение данных об авторах в БД
 def create(request):
     if request.method == "POST":
@@ -27,6 +30,7 @@ def create(request):
         author.date_of_birth = request.POST.get("date_of_birth")
         author.date_of_death = request.POST.get("date_of_death")
         author.save()
+	logger.error("Test!")
         return HttpResponseRedirect("/authors_add/")
 
 # удаление авторов из БД
