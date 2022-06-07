@@ -1,0 +1,21 @@
+version: '3.7'
+services:
+  web: 
+    build: .
+    volumes:
+      - .:/docker_server
+    ports:
+      - 8000:8000
+    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    depends_on:
+      - db
+  db:
+    image: postgres
+    volumes:
+      - ./dbdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: "webbooks"
+      POSTGRES_USER: "admin"
+      POSTGRES_PASSWORD: "admin"
+    ports:
+      - "5432:5432"
