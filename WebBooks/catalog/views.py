@@ -8,6 +8,9 @@ from .forms import AuthorsForm
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from .models import Book
+import asyncio
+import logging
+from asgiref.sync import sync_to_async
 # Create your views here.
 
 
@@ -17,7 +20,7 @@ def authors_add(request):
     authorsform = AuthorsForm()
     return render(request, "catalog/authors_add.html",
                   {"form": authorsform, "author": author})
-
+logger = logging.getLogger('main')
 # сохранение данных об авторах в БД
 def create(request):
     if request.method == "POST":
@@ -33,6 +36,7 @@ def create(request):
 def delete(request, id):
     try:
         author = Author.objects.get(id=id)
+	author = asyncio.run(get_author_by_user_id(id))
         author.delete()
         return HttpResponseRedirect("/authors_add/")
     except Author.DoesNotExist:
@@ -74,6 +78,10 @@ def index(request):
                                          'num_instances_available': num_instances_available,
                                          'num_authors': num_authors,
                                          'num_visits': num_visits})
+
+@sync_to_async
+def get_author_by_user_id(id):
+    return Author.objects.get(user_id=id)
 
 class BookListView(generic.ListView):
     model = Book
